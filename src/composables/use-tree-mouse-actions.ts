@@ -39,18 +39,18 @@ export function useTreeViewItemMouseActions() {
         }
     }
 
-    const onDropNode = (dropHost: _InternalItem | undefined, event: DragEvent, isDropValid: IsValidDropCallback | undefined, state: TreeState | undefined): void => {
+    const onDropNode = async (dropHost: _InternalItem | undefined, event: DragEvent, isDropValid: IsValidDropCallback | undefined, state: TreeState | undefined): Promise<void> => {
         if (event.dataTransfer) {
             removeHoverClass(event)
             const droppedNode = JSON.parse(event.dataTransfer.getData('text/plain')) as _InternalItem;
-            if (!isDropValid || !isDropValid(droppedNode, dropHost)) return;
+            if (!isDropValid || !(await isDropValid(droppedNode, dropHost))) return;
 
 
-            
+
             if (dropHost && droppedNode.id === dropHost.id) {
                 return
             }
-            
+
             state!.detach(droppedNode.id);
 
             if (dropHost && !dropHost.children)
